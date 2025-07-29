@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WattWise - Customer Care</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background:#77b5fe;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Grid Layout for Support Options */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .issue {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .issue:hover {
+            transform: scale(1.05);
+            background: #f8f8f8;
+        }
+
+        .icon {
+            font-size: 24px;
+            color:#77b5fe;
+        }
+
+        .content {
+            flex-grow: 1;
+        }
+
+        a {
+            text-decoration: none;
+            color: #77b5fe;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Live Chat & Support Ticket */
+        .support-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background:#0c30e8;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background:#0b16e2;
+        }
+
+        /* Chat & Ticket Input */
+        .hidden {
+            display: none;
+        }
+
+        .chat-box, .ticket-box {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .send-btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">WattWise - Customer Care & Support</div>
+
+    <div class="container">
+        <h2>How can we help you?</h2>
+
+        <div class="grid-container">
+            <div class="issue">
+                <i class="fas fa-bolt icon"></i>
+                <div class="content">
+                    <p><strong>Power Outage</strong></p>
+                    <p><a href="#">Report an Outage</a></p>
+                    <p>If unresolved, contact: <strong>1800-123-4567</strong></p>
+                </div>
+            </div>
+            <div class="issue">
+                <i class="fas fa-file-invoice icon"></i>
+                <div class="content">
+                    <p><strong>Billing Issues</strong></p>
+                    <p><a href="#">Billing Help</a></p>
+                    <p>If unresolved, contact: <strong>1800-234-5678</strong></p>
+                </div>
+            </div>
+            <div class="issue">
+                <i class="fas fa-user icon"></i>
+                <div class="content">
+                    <p><strong>New Connection</strong></p>
+                    <p><a href="#">Apply for New Connection</a></p>
+                    <p>If unresolved, contact: <strong>1800-345-6789</strong></p>
+                </div>
+            </div>
+            <div class="issue">
+                <i class="fas fa-tools icon"></i>
+                <div class="content">
+                    <p><strong>Meter Issues</strong></p>
+                    <p><a href="#">Report Meter Issues</a></p>
+                    <p>If unresolved, contact: <strong>1800-456-7890</strong></p>
+                </div>
+            </div>
+            <div class="issue">
+                <i class="fas fa-lightbulb icon"></i>
+                <div class="content">
+                    <p><strong>Energy Saving Tips</strong></p>
+                    <p><a href="#">Learn More</a></p>
+                    <p>For expert help, call: <strong>1800-567-8901</strong></p>
+                </div>
+            </div>
+            <div class="issue">
+                <i class="fas fa-phone-alt icon"></i>
+                <div class="content">
+                    <p><strong>General Customer Support</strong></p>
+                    <p><a href="#">Customer Service</a></p>
+                    <p>Contact us: <strong>1800-678-9012</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Options -->
+        <div class="support-container">
+            <button onclick="toggleChat()">Live Chat</button>
+            <button onclick="toggleTicket()">Submit a Ticket</button>
+        </div>
+
+        <!-- Live Chat -->
+        <div id="chatBox" class="chat-box hidden">
+            <h3>Live Chat</h3>
+            <textarea id="chatMessage" placeholder="Type your message..."></textarea>
+            <button class="send-btn" onclick="sendChat()">Send</button>
+        </div>
+
+        <!-- Support Ticket -->
+        <div id="ticketBox" class="ticket-box hidden">
+            <h3>Submit a Support Ticket</h3>
+            <input type="text" id="ticketName" placeholder="Your Name">
+            <input type="email" id="ticketEmail" placeholder="Your Email">
+            <textarea id="ticketMessage" placeholder="Describe your issue..."></textarea>
+            <button class="send-btn" onclick="submitTicket()">Submit</button>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleChat() {
+            document.getElementById("chatBox").classList.toggle("hidden");
+            document.getElementById("ticketBox").classList.add("hidden");
+        }
+
+        function toggleTicket() {
+            document.getElementById("ticketBox").classList.toggle("hidden");
+            document.getElementById("chatBox").classList.add("hidden");
+        }
+
+        function sendChat() {
+            alert("Chat message sent! Our team will respond shortly.");
+        }
+
+        function submitTicket() {
+            alert("Ticket submitted successfully! We'll get back to you soon.");
+        }
+    </script>
+
+</body>
+</html>

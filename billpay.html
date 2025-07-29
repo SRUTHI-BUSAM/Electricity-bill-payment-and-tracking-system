@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Payment | Watt Wise</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #77b5fe;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Main container */
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            margin-top: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        input, select, button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background-color:#77b5fe;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color:#77b5fe;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Bill Info Section */
+        .bill-info {
+            display: none;
+            margin-top: 10px;
+        }
+
+        /* Payment Success Message */
+        .success-message {
+            display: none;
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header>
+        <div class="navbar">Bill Payment</div>
+    </header>
+
+    <!-- Bill Payment Container -->
+    <div class="container">
+        <h2>Pay Your Bill</h2>
+        
+        <label for="serviceNumber">Service Number:</label>
+        <input type="text" id="serviceNumber" placeholder="Enter your 13-digit service number" maxlength="13" oninput="validateInput(this)">
+        
+        <button onclick="fetchBill()">Fetch Bill</button>
+
+        <!-- Bill Info Section -->
+        <div id="billInfo" class="bill-info">
+            <p>Your bill for this month: <strong id="billAmount"></strong></p>
+
+            <label for="paymentMethod">Select Payment Method:</label>
+            <select id="paymentMethod">
+                <option value="upi">UPI</option>
+                <option value="card">Credit/Debit Card</option>
+                <option value="netbanking">Net Banking</option>
+            </select>
+
+            <button id="payButton" onclick="payBill()" disabled>Proceed to Pay</button>
+            <p class="loading" id="loading">Processing payment...</p>
+            <p class="success-message" id="successMessage">Payment Successful! 🎉</p>
+        </div>
+    </div>
+
+    <script>
+        function validateInput(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 13); // Allow only digits and limit to 13
+        }
+
+        function fetchBill() {
+            let serviceNumber = document.getElementById("serviceNumber").value;
+            if (serviceNumber.length !== 13) {
+                alert("Please enter a valid 13-digit service number.");
+                return;
+            }
+
+            // Simulate bill fetching
+            let billAmount = Math.floor(Math.random() * (2000 - 500 + 1)) + 500; // ₹500-₹2000
+            document.getElementById("billAmount").innerText = "₹" + billAmount;
+            document.getElementById("billInfo").style.display = "block";
+            document.getElementById("payButton").disabled = false;
+            document.getElementById("successMessage").style.display = "none";
+        }
+
+        function payBill() {
+            let paymentMethod = document.getElementById("paymentMethod").value;
+            let loading = document.getElementById("loading");
+            let successMessage = document.getElementById("successMessage");
+
+            loading.style.display = "block";
+            document.getElementById("payButton").disabled = true;
+
+            setTimeout(() => {
+                loading.style.display = "none";
+                successMessage.style.display = "block";
+                alert(`Payment successful via ${paymentMethod.toUpperCase()}!`);
+                
+                // Reset after payment
+                document.getElementById("billInfo").style.display = "none";
+                document.getElementById("serviceNumber").value = "";
+                document.getElementById("payButton").disabled = true;
+            }, 2000); // Simulate 2 seconds processing
+        }
+    </script>
+
+</body>
+</html>

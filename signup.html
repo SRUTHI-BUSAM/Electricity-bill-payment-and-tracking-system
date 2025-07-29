@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | WattWise</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #faf9f6;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 350px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #372be5;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #77b5fe;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #77b5fe;
+        }
+
+        #signup-error-message {
+            color: #77b5fe;
+            font-size: 14px;
+        }
+
+        #success-message {
+            color: green;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="text" id="signup-mobile" placeholder="Enter Mobile Number" required>
+            <input type="password" id="signup-password" placeholder="Create Password" required>
+            <button type="submit">Sign Up</button>
+            <p id="signup-error-message"></p>
+            <p id="success-message"></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("signup-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let signupMobile = document.getElementById("signup-mobile").value.trim();
+            let signupPassword = document.getElementById("signup-password").value.trim();
+            let signupErrorMessage = document.getElementById("signup-error-message");
+            let successMessage = document.getElementById("success-message");
+
+            if (!/^\d{10}$/.test(signupMobile)) {
+                signupErrorMessage.textContent = "Enter a valid 10-digit mobile number.";
+                return;
+            }
+
+            if (signupPassword.length < 6) {
+                signupErrorMessage.textContent = "Password must be at least 6 characters long.";
+                return;
+            }
+
+            successMessage.textContent = "Successfully Signed Up! Redirecting...";
+            setTimeout(() => {
+                window.location.href = "home.html";
+            }, 2000); 
+        });
+    </script>
+</body>
+</html>

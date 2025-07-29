@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Tracker | Watt Wise</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color:#77b5fe;
+            color: white;
+            padding: 15px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        input, button {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button {
+            background-color:#77b5fe;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color:#5fa4e6;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .popup button {
+            background: #77b5fe;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        .chart-container {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">Energy Consumption</div>
+
+    <div class="container">
+        <div class="section">
+            <h2>Enter Your Energy Consumption</h2>
+            <input type="number" id="energyInput" placeholder="Enter kWh used">
+            <button onclick="addEnergyUsage()">Add Usage</button>
+        </div>
+
+        <!-- Pie Chart replaces Usage History -->
+        <div class="chart-container">
+            <h2>Device Usage (Monthly)</h2>
+            <canvas id="deviceUsagePieChart"></canvas>
+        </div>
+
+        <div class="section">
+            <h2>Energy Saving Tips</h2>
+            <p id="energyTip">Click below for a new tip!</p>
+            <button onclick="generateTip()">Get a Tip</button>
+        </div>
+
+        <div class="chart-container">
+            <h2>Monthly Consumption</h2>
+            <canvas id="monthlyConsumptionChart"></canvas>
+        </div>
+    </div>
+
+    <div id="popup" class="popup">
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        let monthlyData = [];
+
+        function showPopup(message) {
+            document.getElementById("popupMessage").innerText = message;
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function addEnergyUsage() {
+            let energyInput = document.getElementById("energyInput").value;
+
+            if (!energyInput || energyInput <= 0) {
+                showPopup("Please enter a valid energy consumption value.");
+                return;
+            }
+
+            monthlyData.push(parseInt(energyInput));
+            updateChart();
+
+            document.getElementById("energyInput").value = "";
+        }
+
+        function generateTip() {
+            let tips = [
+                "Turn off lights when leaving a room to save electricity.",
+                "Unplug devices when not in use to prevent phantom energy loss.",
+                "Use LED bulbs instead of incandescent to reduce power consumption.",
+                "Run washing machines and dishwashers with full loads to save energy.",
+                "Use ceiling fans instead of air conditioning when possible.",
+                "Set your thermostat a few degrees higher in summer and lower in winter to save energy.",
+                "Insulate your home properly to reduce heating and cooling costs."
+            ];
+
+            let randomTip = tips[Math.floor(Math.random() * tips.length)];
+            document.getElementById("energyTip").innerText = randomTip;
+        }
+
+        // Monthly Bar Chart
+        let ctx = document.getElementById('monthlyConsumptionChart').getContext('2d');
+        let monthlyConsumptionChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                datasets: [{
+                    label: 'Monthly Consumption (kWh)',
+                    data: [320, 290, 350, 400, 420, 380],
+                    backgroundColor: ['#FF5733', '#33FF57', '#337BFF', '#FFC300', '#C70039', '#900C3F'],
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateChart() {
+            let lastMonth = new Date().getMonth();
+            monthlyConsumptionChart.data.datasets[0].data[lastMonth] = monthlyData.reduce((a, b) => a + b, 0);
+            monthlyConsumptionChart.update();
+        }
+
+        // Device Usage Pie Chart
+        let deviceCtx = document.getElementById('deviceUsagePieChart').getContext('2d');
+        let deviceUsagePieChart = new Chart(deviceCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Air Conditioner', 'Refrigerator', 'Washing Machine', 'Lights', 'Others'],
+                datasets: [{
+                    data: [120, 80, 50, 90, 60], // Example data
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#81C784', '#BA68C8'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw} kWh`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

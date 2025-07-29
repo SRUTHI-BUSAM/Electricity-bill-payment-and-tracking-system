@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Portal</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background:#77b5fe;
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .options-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: block;
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        input, select, button {
+            display: block;
+            width: 90%;
+            padding: 10px;
+            margin: 10px auto;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Buttons */
+        button {
+            background: #77b5fe;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #77b5fe;
+        }
+
+        /* Popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .popup button {
+            background: #77b5fe;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">Service Portal</div>
+
+    <!-- Initial Options -->
+    <div class="options-container">
+        <button onclick="showSection('newConnection')">New Connection</button>
+        <button onclick="showSection('billPayment')">Bill Payment</button>
+    </div>
+
+    <!-- New Connection Section -->
+    <div id="newConnection" class="container">
+        <h3>New Connection Request</h3>
+        <input type="text" id="ncServiceNumber" placeholder="Enter Service Number" oninput="validateServiceNumber(this)">
+        <input type="tel" id="ncMobileNumber" placeholder="Enter Mobile Number" oninput="validateMobile(this)">
+        <input type="email" id="ncEmail" placeholder="Enter Email">
+        <button onclick="showPayment('newConnection')">Proceed to Payment</button>
+    </div>
+
+    <!-- Bill Payment Section -->
+    <div id="billPayment" class="container">
+        <h3>Bill Payment</h3>
+        <input type="text" id="bpServiceNumber" placeholder="Enter Service Number" oninput="validateServiceNumber(this)">
+        <input type="text" id="bpAmount" placeholder="Enter Amount" readonly>
+        <button onclick="showPayment('billPayment')">Proceed to Payment</button>
+    </div>
+
+    <!-- Payment Section -->
+    <div id="paymentSection" class="container">
+        <h3>Payment Details</h3>
+        <select id="paymentMethod">
+            <option value="">Select Payment Method</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+            <option value="UPI">UPI</option>
+        </select>
+        <input type="text" id="paymentAmount" readonly>
+        <button onclick="makePayment()">Pay Now</button>
+    </div>
+
+    <!-- Popup Message -->
+    <div id="popup" class="popup">
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        function showPopup(message) {
+            document.getElementById("popupMessage").innerText = message;
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function showSection(section) {
+            document.querySelector('.options-container').style.display = 'none';
+            document.getElementById(section).style.display = "block";
+        }
+
+        function showPayment(type) {
+            let amount;
+            if (type === "newConnection") {
+                let serviceNumber = document.getElementById("ncServiceNumber").value;
+                let mobileNumber = document.getElementById("ncMobileNumber").value;
+                let email = document.getElementById("ncEmail").value;
+                
+                if (!serviceNumber || !mobileNumber || !email) {
+                    showPopup("Please fill all fields before proceeding.");
+                    return;
+                }
+                amount = 500;
+            } else {
+                let serviceNumber = document.getElementById("bpServiceNumber").value;
+                let enteredAmount = Math.floor(Math.random() * (2000 - 500 + 1)) + 500; // Generate a bill
+                document.getElementById("bpAmount").value = enteredAmount;
+                amount = enteredAmount;
+            }
+
+            document.getElementById("paymentAmount").value = amount;
+            document.getElementById("newConnection").style.display = "none";
+            document.getElementById("billPayment").style.display = "none";
+            document.getElementById("paymentSection").style.display = "block";
+        }
+
+        function makePayment() {
+            let paymentMethod = document.getElementById("paymentMethod").value;
+            
+            if (paymentMethod) {
+                showPopup("Payment of ₹" + document.getElementById("paymentAmount").value + " successful via " + paymentMethod + "!");
+                document.getElementById("paymentSection").style.display = "none";
+            } else {
+                showPopup("Please select a payment method.");
+            }
+        }
+
+        function validateServiceNumber(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 13);
+        }
+
+        function validateMobile(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 10);
+        }
+    </script>
+
+</body>
+</html>

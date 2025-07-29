@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Energy & Load Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #77b5fe;
+      color: white;
+      padding: 15px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 700px;
+      margin: 20px auto;
+    }
+
+    .device-container,
+    .manual-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #e3f2fd;
+      border-radius: 8px;
+    }
+
+    select,
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #3379ca;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #0a1fdb;
+    }
+
+    .result-container {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #0078FF;
+      background-color: #f0f8ff;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      text-align: center;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    .popup button {
+      background: #77b5fe;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    .toggle-option {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">Energy & Load Calculator</div>
+
+  <div class="container">
+    <div class="toggle-option">
+      <label><input type="radio" name="inputMode" value="manual" checked onchange="toggleInputMode(this.value)"> Enter Total Consumption</label>
+      <label><input type="radio" name="inputMode" value="device" onchange="toggleInputMode(this.value)"> Enter Device-wise</label>
+    </div>
+
+    <div id="manualSection" class="manual-container">
+      <input type="number" id="manualEnergy" placeholder="Enter total energy used (kWh)">
+    </div>
+
+    <div id="deviceSection" style="display: none;">
+      <div id="devices">
+        <div class="device-container">
+          <select class="device-name">
+            <option value="Ceiling Fan">Ceiling Fan</option>
+            <option value="Table Fan">Table Fan</option>
+            <option value="Tube Light">Tube Light</option>
+            <option value="LED Bulb">LED Bulb</option>
+            <option value="Refrigerator">Refrigerator</option>
+            <option value="Air Conditioner">Air Conditioner</option>
+            <option value="Washing Machine">Washing Machine</option>
+            <option value="Water Heater">Water Heater</option>
+            <option value="Electric Iron">Electric Iron</option>
+            <option value="Microwave Oven">Microwave Oven</option>
+            <option value="Toaster">Toaster</option>
+            <option value="Mixer Grinder">Mixer Grinder</option>
+            <option value="Television">Television</option>
+            <option value="Laptop">Laptop</option>
+            <option value="Desktop Computer">Desktop Computer</option>
+            <option value="Mobile Charger">Mobile Charger</option>
+            <option value="Induction Stove">Induction Stove</option>
+            <option value="Water Purifier">Water Purifier</option>
+            <option value="Hair Dryer">Hair Dryer</option>
+            <option value="Room Heater">Room Heater</option>
+          </select>
+          <input type="number" class="power" placeholder="Watts">
+          <input type="number" class="appliances" placeholder="No. of Devices">
+          <select class="hours">
+            <option value="0">0hr</option>
+            <option value="1">1hr</option>
+            <option value="2">2hr</option>
+            <option value="3">3hr</option>
+            <option value="4">4hr</option>
+            <option value="5">5hr</option>
+            <option value="6">6hr</option>
+            <option value="7">7hr</option>
+            <option value="8">8hr</option>
+            <option value="9">9hr</option>
+            <option value="10">10hr</option>
+            <option value="12">12hr</option>
+            <option value="16">16hr</option>
+            <option value="24">24hr</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="addDevice()">+ Add Another Device</button>
+    </div>
+
+    <label for="rate">Electricity Rate (₹/kWh):</label>
+    <input type="number" id="rate" placeholder="Enter rate per kWh">
+
+    <button onclick="calculateEnergyUsage()">🔍 Calculate Energy Usage</button>
+
+    <div id="result" class="result-container"></div>
+  </div>
+
+  <div id="popup" class="popup">
+    <p id="popupMessage"></p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <script>
+    function toggleInputMode(value) {
+      document.getElementById("manualSection").style.display = value === "manual" ? "grid" : "none";
+      document.getElementById("deviceSection").style.display = value === "device" ? "block" : "none";
+    }
+
+    function addDevice() {
+      const devicesContainer = document.getElementById('devices');
+      const newDevice = document.createElement('div');
+      newDevice.classList.add('device-container');
+      newDevice.innerHTML = `
+        <select class="device-name">
+          <option value="Ceiling Fan">Ceiling Fan</option>
+          <option value="Table Fan">Table Fan</option>
+          <option value="Tube Light">Tube Light</option>
+          <option value="LED Bulb">LED Bulb</option>
+          <option value="Refrigerator">Refrigerator</option>
+          <option value="Air Conditioner">Air Conditioner</option>
+          <option value="Washing Machine">Washing Machine</option>
+          <option value="Water Heater">Water Heater</option>
+          <option value="Electric Iron">Electric Iron</option>
+          <option value="Microwave Oven">Microwave Oven</option>
+          <option value="Toaster">Toaster</option>
+          <option value="Mixer Grinder">Mixer Grinder</option>
+          <option value="Television">Television</option>
+          <option value="Laptop">Laptop</option>
+          <option value="Desktop Computer">Desktop Computer</option>
+          <option value="Mobile Charger">Mobile Charger</option>
+          <option value="Induction Stove">Induction Stove</option>
+          <option value="Water Purifier">Water Purifier</option>
+          <option value="Hair Dryer">Hair Dryer</option>
+          <option value="Room Heater">Room Heater</option>
+        </select>
+        <input type="number" class="power" placeholder="Watts">
+        <input type="number" class="appliances" placeholder="No. of Devices">
+        <select class="hours">
+          <option value="0">0hr</option>
+          <option value="1">1hr</option>
+          <option value="2">2hr</option>
+          <option value="3">3hr</option>
+          <option value="4">4hr</option>
+          <option value="5">5hr</option>
+          <option value="6">6hr</option>
+          <option value="7">7hr</option>
+          <option value="8">8hr</option>
+          <option value="9">9hr</option>
+          <option value="10">10hr</option>
+          <option value="12">12hr</option>
+          <option value="16">16hr</option>
+          <option value="24">24hr</option>
+        </select>
+      `;
+      devicesContainer.appendChild(newDevice);
+    }
+
+    function showPopup(message) {
+      document.getElementById("popupMessage").innerText = message;
+      document.getElementById("popup").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+
+    function calculateEnergyUsage() {
+      const rate = parseFloat(document.getElementById('rate').value);
+      if (isNaN(rate) || rate <= 0) {
+        showPopup("⚠️ Please enter a valid electricity rate.");
+        return;
+      }
+
+      const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
+      let totalEnergy = 0;
+      let resultHTML = "<strong>Energy Consumption Details:</strong><br>";
+
+      if (inputMode === "manual") {
+        const energy = parseFloat(document.getElementById("manualEnergy").value);
+        if (isNaN(energy) || energy <= 0) {
+          showPopup("⚠️ Please enter a valid total energy consumption.");
+          return;
+        }
+        const cost = energy * rate;
+        resultHTML += `Total Usage: ${energy.toFixed(2)} kWh | ₹${cost.toFixed(2)}<br>`;
+        totalEnergy = cost;
+      } else {
+        const devices = document.querySelectorAll('.device-container');
+        let anyValid = false;
+
+        devices.forEach(device => {
+          const name = device.querySelector('.device-name').value;
+          const power = parseFloat(device.querySelector('.power').value);
+          const appliances = parseInt(device.querySelector('.appliances').value);
+          const hours = parseFloat(device.querySelector('.hours').value);
+
+          if (!isNaN(power) && !isNaN(appliances) && !isNaN(hours) && power > 0 && appliances > 0 && hours > 0) {
+            const energyUsage = (power * appliances * hours * 30) / 1000;
+            const cost = energyUsage * rate;
+            totalEnergy += cost;
+            anyValid = true;
+            resultHTML += `${name}: ${energyUsage.toFixed(2)} kWh | ₹${cost.toFixed(2)}<br>`;
+          }
+        });
+
+        if (!anyValid) {
+          showPopup("⚠️ Please enter valid values for at least one device.");
+          return;
+        }
+      }
+
+      resultHTML += `<br><strong>Total Monthly Cost: ₹${totalEnergy.toFixed(2)}</strong>`;
+      document.getElementById('result').innerHTML = resultHTML;
+    }
+  </script>
+</body>
+</html>
